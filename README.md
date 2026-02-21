@@ -186,7 +186,8 @@ Risk:
 - GET /api/sites/{id}/risk
 
 Health:
-- GET /up
+- GET /api/health
+  Returns deterministic JSON status payload.
 
 ---
 
