@@ -1,148 +1,127 @@
-# PROJECT CONSTITUTION DERIVATION & ADOPTION BINDING
-Version: v1.0
-Status: Binding
-Authority: Project Architectural Governance
+# PROJECT CONSTITUTION BINDING
+Version: v1.2
+Status: Binding (TFM Edition)
+Authority: Project Maintainer
 
----
+------------------------------------------------------------------------
 
-# 1. Purpose
+## 1. Purpose
 
-This document formally binds this project to the Universal Governance Layer located at:
+This document formally binds the Operational Security & Observability Hub (OSOH) project to the internal governance standards located in:
 
 /governance/
 
-It establishes deterministic inheritance of meta-standards.
+The objective is to ensure engineering discipline, security consistency, determinism integrity, and reproducible deployment throughout the MVP lifecycle.
 
----
+------------------------------------------------------------------------
 
-# 2. Scope
+## 2. Scope
 
 This binding applies to:
 
-- All documents under /docs/
-- All source code
-- All CI configurations
-- All deployment artifacts
-- All release attestations
+- All documentation under /docs
+- All backend and frontend source code
+- CI configuration
+- Docker configuration
+- Deployment artifacts
+- Release attestations
 
-This binding SHALL NOT apply to experimental branches not merged into main.
+Experimental branches not merged into main are excluded.
 
----
+------------------------------------------------------------------------
 
-# 3. Adopted Universal Standards
+## 3. Adopted Governance Standards
 
-The project SHALL adopt the following universal standards:
+The project adopts the following internal standards:
 
-- UNIVERSAL_STRUCTURAL_EXPRESSION_STANDARD_v1.1.md
-- UNIVERSAL_ENGINEERING_QUALITY_FRAMEWORK_v1.0.md
-- UNIVERSAL_GOVERNANCE_MODEL_v1.0.md
-- UNIVERSAL_AUDIT_PROTOCOL_v1.0.md
-- UNIVERSAL_EVIDENCE_SCHEMA_v1.0.md
-- UNIVERSAL_RELEASE_COMPLIANCE_STANDARD_v1.0.md
+- UNIVERSAL_STRUCTURAL_EXPRESSION_STANDARD_v1.1
+- UNIVERSAL_ENGINEERING_QUALITY_FRAMEWORK_v1.0
+- UNIVERSAL_GOVERNANCE_MODEL_v1.0
+- UNIVERSAL_AUDIT_PROTOCOL_v1.0
+- UNIVERSAL_EVIDENCE_SCHEMA_v1.0
+- UNIVERSAL_RELEASE_COMPLIANCE_STANDARD_v1.0
 
-All adopted standards SHALL be treated as binding meta-standards.
+Additionally, the project is governed by:
 
----
+- MVP_DEFINITION_AND_CONTROL_v1.0
+- MVP_HARDENING_ADDENDUM_v1.0
 
-# 4. Version Traceability Matrix
+These documents guide structure, security, and quality but do not expand MVP scope.
 
-| Universal Standard | Adopted Version | Project Binding Status |
-|-------------------|----------------|------------------------|
-| Structural Expression | v1.1 | Adopted |
-| Engineering Quality | v1.0 | Adopted |
-| Governance Model | v1.0 | Adopted |
-| Audit Protocol | v1.0 | Adopted |
-| Evidence Schema | v1.0 | Adopted |
-| Release Compliance | v1.0 | Adopted |
+------------------------------------------------------------------------
 
-Traceability SHALL be maintained upon version updates.
+## 4. Non-Weakening Rule
 
----
+Project-level artifacts SHALL NOT:
 
-# 5. Non-Weakening Declaration
+- Weaken mandatory constraints defined in governance standards.
+- Introduce conflicting security logic.
+- Bypass CI enforcement.
+- Override documented lifecycle controls.
+- Remove deterministic guarantees.
+- Remove ingestion rate limiting.
+- Disable security event logging.
 
-Project-level documents SHALL NOT:
+------------------------------------------------------------------------
 
-- Weaken any MUST-level constraint defined in universal standards.
-- Redefine invariant semantics.
-- Introduce conflicting authority rules.
+## 5. Practical Inheritance
 
-Any attempt to weaken universal constraints SHALL be non-compliant.
+The governance standards influence:
 
----
+- Branch discipline
+- CI gating
+- Documentation structure
+- Deterministic risk computation
+- Automatic risk recomputation after ingestion
+- SHA256 token enforcement
+- Rate limiting of ingestion endpoints
+- Security event logging
+- Deployment reproducibility
 
-# 6. Derivation Statement
+The project implements these in a practical, MVP-aligned manner.
 
-Universal Meta-Standards define structural invariants.
+------------------------------------------------------------------------
 
-Project Constitution (docs/) SHALL derive from universal standards by:
-
-- Refinement only.
-- Specialization without weakening.
-- Explicit namespace extension.
-
-No project-level invariant SHALL contradict universal invariant.
-
----
-
-# 7. Compliance Inheritance Rule
-
-All invariants defined in universal standards SHALL be inherited.
-
-Project-level invariants MAY:
-
-- Add stricter constraints.
-- Add additional measurable criteria.
-
-Project-level invariants SHALL NOT reduce constraint strength.
-
----
-
-# 8. Conflict Resolution Rule
+## 6. Conflict Resolution
 
 If conflict exists between:
 
-Universal Standard
-and
-Project Constitution
+- A governance guideline
+- A project implementation constraint
 
-The stricter universal constraint SHALL prevail.
+The stricter security or determinism rule SHALL prevail,
+provided it remains within MVP scope.
 
-Ambiguity SHALL default to stricter interpretation.
+Scope expansion is not permitted under conflict resolution.
 
----
+------------------------------------------------------------------------
 
-# 9. Evolution & Upgrade Protocol
+## 7. Evolution Policy
 
-If a universal standard version changes:
+If governance standards are updated:
 
-1. Project SHALL review impact.
-2. Version Traceability Matrix SHALL be updated.
-3. Compliance audit SHALL be re-executed.
-4. Derivation alignment SHALL be verified.
+1. Impact analysis SHALL be performed.
+2. Relevant documentation SHALL be updated.
+3. CI validation SHALL be re-run.
+4. Release attestation SHALL reflect changes.
+5. Determinism and security invariants SHALL be revalidated.
 
-Project SHALL NOT silently downgrade universal standard versions.
+No silent downgrade of engineering standards is permitted.
 
-Major universal version upgrades MAY require project constitution revision.
+------------------------------------------------------------------------
 
----
+## 8. Hierarchical Structure
 
-# 10. Formal Adoption Declaration
-
-This project formally adopts the Universal Governance Layer as binding meta-authority.
-
-Hierarchy:
-
-Universal Meta-Standards (/governance)
+Internal Governance Standards (/governance)
         ↓
-Project Constitution (/docs)
+Project Constitution Binding
         ↓
-Release Attestations (/docs/09_EVIDENCE_MODEL)
+Project Architecture & Documentation (/docs)
+        ↓
+Implementation Layer (/src)
+        ↓
+Release Attestation
 
-All future releases SHALL demonstrate compliance with this hierarchy.
-
-Failure to comply SHALL invalidate release attestation.
-
----
+------------------------------------------------------------------------
 
 END OF DOCUMENT
