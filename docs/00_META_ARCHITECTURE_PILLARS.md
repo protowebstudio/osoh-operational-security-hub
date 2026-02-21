@@ -1,162 +1,154 @@
-# META ARCHITECTURE — FOUNDATIONAL PILLARS (SEALED SOVEREIGN EDITION)
-## TFM — Governance-Oriented Engineering Constitution
+# META ARCHITECTURE — ENGINEERING PILLARS
+Version: v1.4.0
+Status: Binding (TFM Edition)
+Authority: Project Maintainer
 
-Version: v1.2.0
-Status: Binding + Cryptographically Constrained
-Authority: Project Architectural Governance
+------------------------------------------------------------------------
 
----
+## 1. Purpose
 
-# 0. Normative Language
+This document defines the engineering principles governing the development of the Operational Security & Observability Hub (OSOH) MVP.
+
+It establishes practical controls for governance, security, determinism, lifecycle discipline, and auditability.
+
+This is an engineering control document, not a theoretical framework.
+
+------------------------------------------------------------------------
+
+## 2. Normative Language
 
 MUST / SHALL → Mandatory requirement  
 SHOULD → Strong recommendation  
 MAY → Optional  
 
-No lower-level artifact may weaken a MUST requirement.
+Project-level artifacts SHALL NOT weaken MUST-level requirements defined here.
 
----
+------------------------------------------------------------------------
 
-# 1. Constitutional Governance Rule
+## 3. Pillar I — Governance
 
-C-1: This document is version-controlled and immutable per release.  
-C-2: Any modification requires:
-      - Version increment
-      - ADR entry
-      - Justification
-      - Impact assessment
-C-3: Constitutional violations SHALL halt release.
+### Invariants
 
----
+G-I1: All structural changes MUST be version-controlled.  
+G-I2: Releases SHALL be tagged.  
+G-I3: Architectural decisions MUST be documented via ADR when non-trivial.  
+G-I4: Branch protection SHALL prevent direct commits to main.  
 
-# 2. Compliance Audit Procedure
+### Enforcement
 
-Audit MUST occur:
-- On every Pull Request
-- On every release
+- Git-based version control
+- Pull Request review
+- CI gate enforcement
+- ADR registry
 
-Audit SHALL verify:
-- Pillar invariants
-- Test coverage ≥ 70%
-- Security scan results
-- Documentation completeness
-- Deployment reproducibility
+------------------------------------------------------------------------
 
-Audit authority:
-- CI (automated)
-- Maintainer review (manual)
+## 4. Pillar II — Security
 
----
+### Invariants
 
-# 3. Violation Handling Protocol
+S-I1: No secrets SHALL exist in source control.  
+S-I2: Authentication MUST be enforced for protected routes.  
+S-I3: Authorization SHALL follow least privilege.  
+S-I4: Input validation MUST be applied to all external inputs.  
+S-I5: Ingestion tokens MUST be stored as SHA256 hashes.  
+S-I6: Invalid ingestion attempts MUST be logged.  
+S-I7: Ingestion endpoint SHALL be rate-limited.
 
-If invariant fails:
+### Enforcement
 
-1. Block merge
-2. Log violation
-3. Create remediation task
-4. Apply corrective change
-5. Re-run audit
+- Laravel Sanctum authentication
+- SHA256 hashed ingestion tokens
+- Constant-time token validation
+- SecurityEvent logging
+- throttle:60,1 rate limiting
+- Environment variable isolation
 
-Override only via ADR with explicit risk acceptance.
+------------------------------------------------------------------------
 
----
+## 5. Pillar III — Deterministic Integrity
 
-# 4. Pillar I — Governance
+### Invariants
 
-G-I1: All structural mutations MUST be traceable.  
-G-I2: Version increment REQUIRED for release mutation.  
-G-I3: Authority mapping MUST be deterministic.  
-G-I4: Lifecycle transitions MUST be finite and explicit.
+D-I1: Builds MUST be reproducible via Docker.  
+D-I2: Dependency versions SHALL be pinned.  
+D-I3: Risk scoring MUST be deterministic.  
+D-I4: Risk recomputation SHALL occur immediately after ingestion.  
+D-I5: Risk score MUST remain bounded (0–100).  
+D-I6: Threshold classification SHALL follow fixed logic.
 
----
+### Enforcement
 
-# 5. Pillar II — Security
+- Docker Compose
+- CI validation
+- Version tagging
+- Deterministic RiskService
+- Automatic recompute inside ingestion pipeline
 
-S-I1: No secret in source control.  
-S-I2: Authentication MUST be cryptographically verifiable.  
-S-I3: Authorization MUST enforce least privilege.  
-S-I4: All external input validated.
+------------------------------------------------------------------------
 
----
+## 6. Pillar IV — Lifecycle Discipline
 
-# 6. Pillar III — Deterministic Integrity
+### Invariants
 
-D-I1: Builds MUST be reproducible.  
-D-I2: Dependency versions pinned.  
-D-I3: Release artifact MUST match tagged commit.  
-D-I4: Drift detection enforced.
+L-I1: No deployment without passing tests.  
+L-I2: CI MUST pass before merge.  
+L-I3: Lifecycle transitions SHALL be documented.  
+L-I4: MVP hardening SHALL NOT introduce scope expansion.
 
----
+Minimum test coverage target: ≥ 70%.
 
-# 7. Pillar IV — Lifecycle Discipline
+### Enforcement
 
-L-I1: No deployment without tests.  
-L-I2: CI pass required before merge.  
-L-I3: Lifecycle transitions documented.
+- GitHub Actions CI
+- Branch protection
+- Execution Plan adherence
+- Hardening addendum alignment
 
-Coverage threshold: ≥ 70%.
+------------------------------------------------------------------------
 
----
+## 7. Pillar V — Evidence & Auditability
 
-# 8. Pillar V — Evidence & Auditability
+### Invariants
 
-## 8.1 Meaningful System Action
+E-I1: Security-relevant events MUST be logged.  
+E-I2: Risk recalculations MUST produce timestamped records.  
+E-I3: Deployment validation MUST be reproducible.  
+E-I4: Snapshot records SHALL reflect deterministic state.
 
-A meaningful system action is any operation that:
-- Mutates persistent state
-- Alters authorization boundaries
-- Changes configuration
-- Triggers deployment
-- Produces security-relevant event
+### Enforcement
 
-## 8.2 Evidence Artifact Schema
+- TelemetryEvent records
+- RiskSnapshot records
+- SecurityEvent records
+- Health endpoint verification
+- Release attestation
 
-(Evidence_ID, Control_Reference, Timestamp, Actor, Hash_Reference, Status)
+------------------------------------------------------------------------
 
-## 8.3 Cryptographic Tamper-Evidence Mechanism
+## 8. Compliance Condition
 
-E-CR1: Evidence logs MUST be append-only.  
-E-CR2: Each log entry SHALL include SHA256 hash of its payload.  
-E-CR3: Log entries SHALL be hash-chained:
+A release is considered valid when:
 
-Hₙ = SHA256(Hₙ₋₁ || Payload_Hashₙ)
-
-E-CR4: Any hash mismatch SHALL trigger immediate escalation.  
-E-CR5: Log storage MUST prevent silent deletion or mutation.
-
-This guarantees tamper-evident audit trace.
-
----
-
-# 9. Pillar Dependency Matrix
-
-| Pillar | Depends On | Conflict Resolution |
-|--------|------------|--------------------|
-| Governance | None | Highest Authority |
-| Security | Governance | Governance prevails |
-| Deterministic Integrity | Governance | Governance prevails |
-| Lifecycle Discipline | Governance | Governance prevails |
-| Evidence & Auditability | All | Governance prevails |
-
-Conflict Rule:
-Governance SHALL resolve pillar conflicts.
-
----
-
-# 10. Release Compliance Condition
-
-Release is compliant iff:
-
-- All invariants satisfied
-- Coverage ≥ 70%
-- Security scan passes
 - CI passes
+- Docker build succeeds
+- Deployment validated via health endpoint
 - Documentation updated
-- ADR alignment verified
-- Audit executed
-- Evidence log integrity verified
+- Risk engine behaves deterministically
+- Hardening invariants satisfied
 
----
+------------------------------------------------------------------------
 
-END OF SEALED SOVEREIGN EDITION
+## 9. Structural Limitation
+
+This document:
+
+- Does not introduce distributed governance layers
+- Does not mandate external audit frameworks
+- Does not impose enterprise compliance automation
+- Does not expand beyond MVP scope
+- Does not introduce AI-based scoring
+
+------------------------------------------------------------------------
+
+END OF DOCUMENT
