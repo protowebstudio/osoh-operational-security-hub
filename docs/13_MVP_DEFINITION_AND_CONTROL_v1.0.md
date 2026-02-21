@@ -107,7 +107,11 @@ AC-8: Threshold escalation functions correctly.
 AC-9: RiskSnapshot persisted.  
 AC-10: Dashboard displays live risk data.  
 AC-11: Docker Compose boots full stack successfully.  
-AC-12: /api/health returns 200 OK.  
+AC-12: GET /api/health returns:
+{
+  "status": "ok",
+  "timestamp": "<iso8601>"
+}  
 AC-13: CI pipeline passes.  
 AC-14: Test coverage ≥ 70%.  
 AC-15: No plaintext secrets exist in repository.

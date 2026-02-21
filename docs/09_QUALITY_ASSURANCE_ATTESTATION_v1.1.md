@@ -94,8 +94,14 @@ Deployment has been validated through:
 * Local Docker Compose execution.
 * Cloud deployment (Render or Railway).
 * Environment variable configuration.
-* Health endpoint confirmation.
-* Manual end-to-end demo scenario execution.
+* Deterministic health endpoint confirmation:
+  - GET /api/health
+  - Returns JSON:
+    {
+      "status": "ok",
+      "timestamp": "<iso8601>"
+    }
+* Manual end-to-end demo scenario execution (login → site load → risk snapshot → dashboard render).
 
 Deployment artifacts are reproducible from source.
 

@@ -26,9 +26,21 @@ Invalid token attempts MUST generate SecurityEvent record.
 
 ## Health Endpoint
 
-GET /up
+GET /api/health
+
 Returns:
-{ "status": "ok" }
+
+{
+  "status": "ok",
+  "timestamp": "<iso8601>"
+}
+
+This endpoint SHALL be used for:
+
+- Deployment validation
+- CI health verification
+- Smoke testing
+- Deterministic runtime checks
 
 ------------------------------------------------------------------------
 
