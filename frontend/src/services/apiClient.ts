@@ -27,11 +27,11 @@ export const apiClient = async <T>(
 
     if (response.status === 401) {
         handleUnauthorized();
-        throw new Error("Unauthorized");
+        throw new Error("ERR_UNAUTHORIZED");
     }
 
     if (!response.ok) {
-        throw new Error(`API error: ${response.status}`);
+        throw new Error(`ERR_API_${response.status}`);
     }
 
     return response.json() as Promise<T>;

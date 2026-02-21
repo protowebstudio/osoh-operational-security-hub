@@ -11,8 +11,7 @@ Route::post('/login', [AuthController::class, 'login']);
 Route::get('/health', function () {
     return response()->json([
         'status' => 'ok',
-        'service' => 'OSOH',
-        'version' => 'v1.0.0-mvp-plus',
+        'timestamp' => now()->toIso8601String(),
     ]);
 });
 
