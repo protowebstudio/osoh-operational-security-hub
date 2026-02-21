@@ -1,0 +1,38 @@
+version: '3.9'
+
+services:
+  app:
+    build:
+      context: ./src/backend
+      dockerfile: Dockerfile
+    container_name: osoh_app
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./src/backend:/var/www/html
+    depends_on:
+      - db
+    environment:
+      DB_CONNECTION: pgsql
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_DATABASE: osoh
+      DB_USERNAME: postgres
+      DB_PASSWORD: secret
+    command: php artisan serve --host=0.0.0.0 --port=8000
+
+  db:
+    image: postgres:15
+    container_name: osoh_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: osoh
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: secret
+    ports:
+      - "5432:5432"
+    volumes:
+      - osoh_db_data:/var/lib/postgresql/data
+
+volumes:
+  osoh_db_data:
