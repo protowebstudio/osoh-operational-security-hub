@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\TelemetryEvent;
-use App\Models\SecurityEvent;
+use App\Services\RiskService;
 
 class IngestionController extends Controller
 {
@@ -24,6 +24,10 @@ class IngestionController extends Controller
             'event_timestamp' => $validated['event_timestamp'],
             'message' => $validated['message'] ?? null,
         ]);
+
+        // 🔒 Deterministic synchronous recompute
+        $riskService = new RiskService();
+        $riskService->compute($site);
 
         return response()->json([
             'message' => 'Event ingested',

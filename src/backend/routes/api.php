@@ -8,6 +8,14 @@ use App\Http\Controllers\IngestionController;
 
 Route::post('/login', [AuthController::class, 'login']);
 
+Route::get('/health', function () {
+    return response()->json([
+        'status' => 'ok',
+        'service' => 'OSOH',
+        'version' => 'v1.0.0-mvp-plus',
+    ]);
+});
+
 Route::middleware('auth:sanctum')->group(function () {
 
     Route::post('/logout', [AuthController::class, 'logout']);
@@ -32,4 +40,4 @@ Route::middleware('auth:sanctum')->group(function () {
 
 // Ingestion (site-token based, not user auth)
 Route::post('/ingest', [IngestionController::class, 'ingest'])
-    ->middleware('validate.site.token');
+    ->middleware(['validate.site.token', 'throttle:60,1']);

@@ -15,12 +15,17 @@ class ValidateSiteToken
         $plainToken = $request->header('X-SITE-TOKEN');
 
         if (!$plainToken) {
-            return response()->json(['message' => 'Missing site token'], 401);
+            return response()->json([
+                'message' => 'Missing site token'
+            ], 401);
         }
 
         $hashedIncoming = hash('sha256', $plainToken);
 
-        $site = Site::where('hashed_token', $hashedIncoming)->first();
+        // Constant-time comparison against stored hashes
+        $site = Site::all()->first(function ($candidate) use ($hashedIncoming) {
+            return hash_equals($candidate->hashed_token, $hashedIncoming);
+        });
 
         if (!$site) {
 
@@ -31,10 +36,12 @@ class ValidateSiteToken
                 'occurred_at' => now(),
             ]);
 
-            return response()->json(['message' => 'Invalid site token'], 401);
+            return response()->json([
+                'message' => 'Invalid site token'
+            ], 401);
         }
 
-        // Attach site to request for downstream usage
+        // Attach validated site to request
         $request->attributes->set('site', $site);
 
         return $next($request);
