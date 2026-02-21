@@ -1,0 +1,53 @@
+# =========================
+# OS
+# =========================
+.DS_Store
+Thumbs.db
+
+# =========================
+# Logs
+# =========================
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# =========================
+# Environment Files
+# =========================
+.env
+.env.*
+!.env.example
+
+# =========================
+# Node / Frontend
+# =========================
+frontend/node_modules/
+frontend/dist/
+frontend/.vite/
+
+# =========================
+# Laravel / Backend
+# =========================
+src/backend/vendor/
+src/backend/node_modules/
+src/backend/storage/*.key
+src/backend/storage/logs/
+src/backend/bootstrap/cache/
+
+# =========================
+# Docker
+# =========================
+*.tar
+*.gz
+
+# =========================
+# IDE
+# =========================
+.vscode/
+.idea/
+
+# =========================
+# Test Artifacts
+# =========================
+coverage/
