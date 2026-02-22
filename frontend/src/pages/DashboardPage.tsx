@@ -2,7 +2,8 @@ import { useEffect, useMemo, useState } from "react";
 import { SiteService } from "../services/siteService";
 import { RiskService } from "../services/riskService";
 import type { Site } from "../models/site";
-import type { RiskSnapshot } from "../models/riskSnapshot";
+import type { RiskSnapshot } from "../models/riskSnapshot"
+import LogoutButton from "../components/LogoutButton";
 
 const toUserMessage = (err: unknown): string => {
     if (err instanceof Error) {
@@ -13,6 +14,7 @@ const toUserMessage = (err: unknown): string => {
 };
 
 export const DashboardPage = () => {
+  console.log("Dashboard mounted");
     const [sites, setSites] = useState<Site[]>([]);
     const [selectedSite, setSelectedSite] = useState<Site | null>(null);
     const [risk, setRisk] = useState<RiskSnapshot | null>(null);
@@ -27,7 +29,7 @@ export const DashboardPage = () => {
             setLoadingSites(true);
 
             try {
-                const data = await SiteService.getAll();
+                const data = await SiteService.getSites();
                 setSites(data);
                 setSelectedSite(data[0] ?? null);
             } catch (e) {
@@ -74,6 +76,7 @@ export const DashboardPage = () => {
     return (
         <div>
             <h1>Dashboard</h1>
+        <LogoutButton />
 
             {error && <div>{error}</div>}
 

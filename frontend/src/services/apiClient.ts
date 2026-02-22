@@ -1,6 +1,6 @@
 import { ENV } from "../config/env";
 
-let authToken: string | null = null;
+let authToken: string | null = localStorage.getItem("auth_token");
 
 export const setAuthToken = (token: string | null): void => {
     authToken = token;
