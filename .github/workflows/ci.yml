@@ -50,12 +50,19 @@ jobs:
         run: |
           cp .env.example .env
           echo "DB_CONNECTION=pgsql" >> .env
-          echo "DB_HOST=postgres" >> .env
+          echo "DB_HOST=127.0.0.1" >> .env
           echo "DB_PORT=5432" >> .env
           echo "DB_DATABASE=osoh" >> .env
           echo "DB_USERNAME=postgres" >> .env
           echo "DB_PASSWORD=secret" >> .env
           php artisan key:generate
+
+          # Wait for PostgreSQL
+          until pg_isready -h 127.0.0.1 -p 5432; do
+            echo "Waiting for PostgreSQL..."
+            sleep 2
+          done
+
           php artisan migrate --force
 
       - name: Run tests
