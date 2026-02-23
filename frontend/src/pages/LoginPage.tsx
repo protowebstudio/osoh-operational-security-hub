@@ -1,61 +1,71 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { AuthService } from "../services/authService";
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
-export const LoginPage = () => {
+export function LoginPage() {
   const navigate = useNavigate();
 
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    setError(null);
-    setLoading(true);
-
     try {
-      await AuthService.login(email, password);
-      navigate("/dashboard");
+      const response = await fetch('http://127.0.0.1:8000/api/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        },
+        body: JSON.stringify({ email, password }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        alert(data.message || 'Login failed');
+        return;
+      }
+
+      localStorage.setItem('auth_token', data.token);
+      navigate('/dashboard');
     } catch {
-      setError("Authentication failed");
-    } finally {
-      setLoading(false);
+      alert('Server error');
     }
   };
 
   return (
-    <div>
-      <h1>Login</h1>
+    <div className='min-h-screen bg-slate-900 flex items-center justify-center'>
+      <div className='bg-slate-800 p-8 rounded-xl shadow-xl w-full max-w-md'>
+        <h2 className='text-2xl font-bold text-white mb-6 text-center'>
+          Login
+        </h2>
 
-      <form onSubmit={handleSubmit}>
-        <input
-          type="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          placeholder="Email"
-          required
-          disabled={loading}
-        />
+        <form className='space-y-4' onSubmit={handleSubmit}>
+          <input
+            type='email'
+            placeholder='Email'
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            className='w-full p-3 rounded-lg bg-slate-700 text-white focus:outline-none focus:ring-2 focus:ring-emerald-500'
+          />
 
-        <input
-          type="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          placeholder="Password"
-          required
-          disabled={loading}
-        />
+          <input
+            type='password'
+            placeholder='Password'
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            className='w-full p-3 rounded-lg bg-slate-700 text-white focus:outline-none focus:ring-2 focus:ring-emerald-500'
+          />
 
-        <button type="submit" disabled={loading}>
-          {loading ? "Logging in..." : "Login"}
-        </button>
-      </form>
-
-      {error && <div>{error}</div>}
+          <button
+            type='submit'
+            className='w-full py-3 bg-emerald-500 hover:bg-emerald-600 rounded-lg font-semibold transition'
+          >
+            Login
+          </button>
+        </form>
+      </div>
     </div>
   );
-};
+}

@@ -1,111 +1,99 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 export default function RegisterPage() {
-    const navigate = useNavigate();
+  const navigate = useNavigate();
 
-    const [name, setName] = useState("");
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
-    const [confirmPassword, setConfirmPassword] = useState("");
-    const [error, setError] = useState("");
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
 
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
-        setError("");
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
 
-        if (password !== confirmPassword) {
-            setError("Passwords do not match.");
-            return;
-        }
+    if (password !== confirmPassword) {
+      alert('Passwords do not match');
+      return;
+    }
 
-        try {
-            const response = await fetch(
-                "http://localhost:8000/api/register",
-                {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                        Accept: "application/json",
-                    },
-                    body: JSON.stringify({
-                        name,
-                        email,
-                        password,
-                    }),
-                }
-            );
+    try {
+      const response = await fetch('http://127.0.0.1:8000/api/register', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        },
+        body: JSON.stringify({
+          name,
+          email,
+          password,
+        }),
+      });
 
-            if (!response.ok) {
-                const data = await response.json();
-                setError(data.message || "Registration failed.");
-                return;
-            }
+      const data = await response.json();
 
-            const data = await response.json();
+      if (!response.ok) {
+        alert(data.message || 'Registration failed');
+        return;
+      }
 
-            localStorage.setItem("auth_token", data.token);
+      localStorage.setItem('auth_token', data.token);
+      navigate('/dashboard');
 
-            navigate("/dashboard");
-        } catch (err) {
-            setError("Server error.");
-        }
-    };
+    } catch (error) {
+      alert('Server error');
+    }
+  };
 
-    return (
-        <div className="min-h-screen bg-gray-50 flex items-center justify-center px-6">
-            <div className="w-full max-w-md bg-white p-6 rounded-lg shadow-md">
-                <h2 className="text-2xl font-bold mb-6 text-center">Register</h2>
+  return (
+    <div className='min-h-screen bg-slate-900 flex items-center justify-center'>
+      <div className='bg-slate-800 p-8 rounded-xl shadow-xl w-full max-w-md'>
+        <h2 className='text-2xl font-bold text-white mb-6 text-center'>
+          Register
+        </h2>
 
-                {error && (
-                    <p className="text-red-500 text-sm mb-4">{error}</p>
-                )}
+        <form className='space-y-4' onSubmit={handleSubmit}>
+          <input
+            type='text'
+            placeholder='Name'
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            className='w-full p-3 rounded-lg bg-slate-700 text-white'
+          />
 
-                <form onSubmit={handleSubmit} className="space-y-4">
-                    <input
-                        type="text"
-                        placeholder="Name"
-                        className="w-full border rounded px-3 py-2"
-                        value={name}
-                        onChange={(e) => setName(e.target.value)}
-                        required
-                    />
+          <input
+            type='email'
+            placeholder='Email'
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            className='w-full p-3 rounded-lg bg-slate-700 text-white'
+          />
 
-                    <input
-                        type="email"
-                        placeholder="Email"
-                        className="w-full border rounded px-3 py-2"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        required
-                    />
+          <input
+            type='password'
+            placeholder='Password'
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            className='w-full p-3 rounded-lg bg-slate-700 text-white'
+          />
 
-                    <input
-                        type="password"
-                        placeholder="Password"
-                        className="w-full border rounded px-3 py-2"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        required
-                    />
+          <input
+            type='password'
+            placeholder='Confirm Password'
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
+            className='w-full p-3 rounded-lg bg-slate-700 text-white'
+          />
 
-                    <input
-                        type="password"
-                        placeholder="Confirm Password"
-                        className="w-full border rounded px-3 py-2"
-                        value={confirmPassword}
-                        onChange={(e) => setConfirmPassword(e.target.value)}
-                        required
-                    />
-
-                    <button
-                        type="submit"
-                        className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition"
-                    >
-                        Register
-                    </button>
-                </form>
-            </div>
-        </div>
-    );
+          <button
+            type='submit'
+            className='w-full py-3 bg-emerald-500 hover:bg-emerald-600 rounded-lg font-semibold transition'
+          >
+            Register
+          </button>
+        </form>
+      </div>
+    </div>
+  );
 }
