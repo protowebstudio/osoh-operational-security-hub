@@ -13,6 +13,14 @@ jobs:
   backend-tests:
     runs-on: ubuntu-latest
 
+    env:
+      DB_CONNECTION: pgsql
+      DB_HOST: 127.0.0.1
+      DB_PORT: 5432
+      DB_DATABASE: osoh
+      DB_USERNAME: postgres
+      DB_PASSWORD: secret
+
     services:
       postgres:
         image: postgres:15
@@ -46,23 +54,20 @@ jobs:
       - name: Install dependencies
         run: composer install --no-interaction --prefer-dist
 
+      - name: Wait for PostgreSQL
+        run: |
+          for i in {1..30}; do
+            (echo > /dev/tcp/127.0.0.1/5432) >/dev/null 2>&1 && echo "Postgres is up" && exit 0
+            echo "Waiting for Postgres..."
+            sleep 2
+          done
+          echo "Postgres did not become ready in time" >&2
+          exit 1
+
       - name: Prepare environment
         run: |
           cp .env.example .env
-          echo "DB_CONNECTION=pgsql" >> .env
-          echo "DB_HOST=127.0.0.1" >> .env
-          echo "DB_PORT=5432" >> .env
-          echo "DB_DATABASE=osoh" >> .env
-          echo "DB_USERNAME=postgres" >> .env
-          echo "DB_PASSWORD=secret" >> .env
           php artisan key:generate
-
-          # Wait for PostgreSQL
-          until pg_isready -h 127.0.0.1 -p 5432; do
-            echo "Waiting for PostgreSQL..."
-            sleep 2
-          done
-
           php artisan migrate --force
 
       - name: Run tests
