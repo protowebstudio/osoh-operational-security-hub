@@ -49,6 +49,12 @@ jobs:
       - name: Prepare environment
         run: |
           cp .env.example .env
+          echo "DB_CONNECTION=pgsql" >> .env
+          echo "DB_HOST=postgres" >> .env
+          echo "DB_PORT=5432" >> .env
+          echo "DB_DATABASE=osoh" >> .env
+          echo "DB_USERNAME=postgres" >> .env
+          echo "DB_PASSWORD=secret" >> .env
           php artisan key:generate
           php artisan migrate --force
 
