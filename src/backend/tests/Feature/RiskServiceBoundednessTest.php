@@ -6,6 +6,7 @@ use App\Models\Site;
 use App\Models\TelemetryEvent;
 use App\Services\RiskService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Str;
 use Tests\TestCase;
 
 class RiskServiceBoundednessTest extends TestCase
@@ -31,6 +32,7 @@ class RiskServiceBoundednessTest extends TestCase
 
             for ($i = 0; $i < $n; $i++) {
                 TelemetryEvent::create([
+                    'event_id' => (string) Str::uuid(),
                     'site_id' => $site->id,
                     'severity' => $severities[array_rand($severities)],
                     'event_timestamp' => now()->subSeconds($i),
