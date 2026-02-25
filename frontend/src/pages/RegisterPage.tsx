@@ -1,35 +1,47 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-export function LoginPage() {
+export default function RegisterPage() {
   const navigate = useNavigate();
 
+  const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    if (password !== confirmPassword) {
+      alert('Passwords do not match');
+      return;
+    }
+
     try {
-      const response = await fetch('http://127.0.0.1:8000/api/login', {
+      const response = await fetch('http://127.0.0.1:8000/api/register', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json',
         },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({
+          name,
+          email,
+          password,
+        }),
       });
 
       const data = await response.json();
 
       if (!response.ok) {
-        alert(data.message || 'Login failed');
+        alert(data.message || 'Registration failed');
         return;
       }
 
       localStorage.setItem('auth_token', data.token);
       navigate('/dashboard');
-    } catch {
+
+    } catch (error) {
       alert('Server error');
     }
   };
@@ -38,16 +50,24 @@ export function LoginPage() {
     <div className='min-h-screen bg-slate-900 flex items-center justify-center'>
       <div className='bg-slate-800 p-8 rounded-xl shadow-xl w-full max-w-md'>
         <h2 className='text-2xl font-bold text-white mb-6 text-center'>
-          Login
+          Register
         </h2>
 
         <form className='space-y-4' onSubmit={handleSubmit}>
+          <input
+            type='text'
+            placeholder='Name'
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            className='w-full p-3 rounded-lg bg-slate-700 text-white'
+          />
+
           <input
             type='email'
             placeholder='Email'
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className='w-full p-3 rounded-lg bg-slate-700 text-white focus:outline-none focus:ring-2 focus:ring-emerald-500'
+            className='w-full p-3 rounded-lg bg-slate-700 text-white'
           />
 
           <input
@@ -55,14 +75,22 @@ export function LoginPage() {
             placeholder='Password'
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className='w-full p-3 rounded-lg bg-slate-700 text-white focus:outline-none focus:ring-2 focus:ring-emerald-500'
+            className='w-full p-3 rounded-lg bg-slate-700 text-white'
+          />
+
+          <input
+            type='password'
+            placeholder='Confirm Password'
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
+            className='w-full p-3 rounded-lg bg-slate-700 text-white'
           />
 
           <button
             type='submit'
             className='w-full py-3 bg-emerald-500 hover:bg-emerald-600 rounded-lg font-semibold transition'
           >
-            Login
+            Register
           </button>
         </form>
       </div>

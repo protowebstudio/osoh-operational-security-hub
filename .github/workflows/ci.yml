@@ -1,0 +1,75 @@
+name: OSOH CI
+
+on:
+  push:
+    branches:
+      - main
+      - frontend-constitution
+  pull_request:
+    branches:
+      - main
+      - develop
+
+jobs:
+  backend-tests:
+    runs-on: ubuntu-latest
+
+    env:
+      DB_CONNECTION: pgsql
+      DB_HOST: 127.0.0.1
+      DB_PORT: 5432
+      DB_DATABASE: osoh
+      DB_USERNAME: postgres
+      DB_PASSWORD: secret
+
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_DB: osoh
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: secret
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd="pg_isready -U postgres"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+
+    defaults:
+      run:
+        working-directory: src/backend
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          extensions: pdo_pgsql
+          coverage: none
+
+      - name: Install dependencies
+        run: composer install --no-interaction --prefer-dist
+
+      - name: Wait for PostgreSQL
+        run: |
+          for i in {1..30}; do
+            (echo > /dev/tcp/127.0.0.1/5432) >/dev/null 2>&1 && echo "Postgres is up" && exit 0
+            echo "Waiting for Postgres..."
+            sleep 2
+          done
+          echo "Postgres did not become ready in time" >&2
+          exit 1
+
+      - name: Prepare environment
+        run: |
+          cp .env.example .env
+          php artisan key:generate
+          php artisan migrate --force
+
+      - name: Run tests
+        run: php artisan test --stop-on-failure

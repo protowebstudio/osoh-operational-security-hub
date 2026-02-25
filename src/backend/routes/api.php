@@ -6,7 +6,28 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\SiteController;
 use App\Http\Controllers\IngestionController;
 
+/*
+|--------------------------------------------------------------------------
+| Public Auth Routes
+|--------------------------------------------------------------------------
+*/
+
+Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
+
+/*
+|--------------------------------------------------------------------------
+| Public Risk Endpoint (Read-Only)
+|--------------------------------------------------------------------------
+*/
+
+Route::get('/public-risk/{slug}', [SiteController::class, 'publicRisk']);
+
+/*
+|--------------------------------------------------------------------------
+| Health Check
+|--------------------------------------------------------------------------
+*/
 
 Route::get('/health', function () {
     return response()->json([
@@ -14,6 +35,12 @@ Route::get('/health', function () {
         'timestamp' => now()->toIso8601String(),
     ]);
 });
+
+/*
+|--------------------------------------------------------------------------
+| Authenticated Routes
+|--------------------------------------------------------------------------
+*/
 
 Route::middleware('auth:sanctum')->group(function () {
 
@@ -37,6 +64,11 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/sites/{id}/risk', [SiteController::class, 'risk']);
 });
 
-// Ingestion (site-token based, not user auth)
+/*
+|--------------------------------------------------------------------------
+| Ingestion (Token-Based, No User Auth)
+|--------------------------------------------------------------------------
+*/
+
 Route::post('/ingest', [IngestionController::class, 'ingest'])
     ->middleware(['validate.site.token', 'throttle:60,1']);
