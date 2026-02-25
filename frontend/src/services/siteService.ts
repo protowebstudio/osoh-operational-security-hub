@@ -1,21 +1,15 @@
-import { apiClient } from "./apiClient";
-
-export interface CreateSitePayload {
-    name: string;
-    risk_threshold_high: number;
-    risk_threshold_critical: number;
-    risk_window_size: number;
-}
+import { apiClient } from './apiClient';
+import type { Site } from '../models/site';
 
 export const SiteService = {
-    getSites: async () => {
-        return apiClient("/api/sites", { method: "GET" });
-    },
+  getSites: async (): Promise<Site[]> => {
+    return apiClient<Site[]>('/api/sites');
+  },
 
-    createSite: async (payload: CreateSitePayload) => {
-        return apiClient("/api/sites", {
-            method: "POST",
-            body: JSON.stringify(payload),
-        });
-    },
+  createSite: async (payload: { name: string }): Promise<Site> => {
+    return apiClient<Site>('/api/sites', {
+      method: 'POST',
+      body: JSON.stringify(payload),
+    });
+  },
 };

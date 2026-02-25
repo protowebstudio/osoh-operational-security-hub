@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 use App\Models\TelemetryEvent;
 use App\Services\RiskService;
 
@@ -19,19 +20,20 @@ class IngestionController extends Controller
         ]);
 
         $event = TelemetryEvent::create([
+            'event_id' => (string) Str::uuid(),
             'site_id' => $site->id,
             'severity' => $validated['severity'],
             'event_timestamp' => $validated['event_timestamp'],
             'message' => $validated['message'] ?? null,
         ]);
 
-        // 🔒 Deterministic synchronous recompute
+        // Deterministic synchronous recompute
         $riskService = new RiskService();
         $riskService->compute($site);
 
         return response()->json([
             'message' => 'Event ingested',
-            'event_id' => $event->id,
+            'event_id' => $event->event_id,
         ], 201);
     }
 }
