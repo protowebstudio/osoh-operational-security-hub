@@ -1,25 +1,23 @@
 <?php
 
 use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\DB;
 
 return new class extends Migration
 {
     public function up(): void
     {
-        Schema::table('telemetry_events', function (Blueprint $table) {
-            $table->uuid('event_id')
-                  ->default(DB::raw('gen_random_uuid()'))
-                  ->unique();
-        });
+        // Postgres-safe, idempotent, CI-safe
+        DB::statement("ALTER TABLE telemetry_events ADD COLUMN IF NOT EXISTS event_id uuid");
+        DB::statement("ALTER TABLE telemetry_events ALTER COLUMN event_id SET DEFAULT gen_random_uuid()");
+        DB::statement("UPDATE telemetry_events SET event_id = gen_random_uuid() WHERE event_id IS NULL");
+        DB::statement("ALTER TABLE telemetry_events ALTER COLUMN event_id SET NOT NULL");
+        DB::statement("CREATE UNIQUE INDEX IF NOT EXISTS telemetry_events_event_id_unique ON telemetry_events(event_id)");
     }
 
     public function down(): void
     {
-        Schema::table('telemetry_events', function (Blueprint $table) {
-            $table->dropColumn('event_id');
-        });
+        DB::statement("DROP INDEX IF EXISTS telemetry_events_event_id_unique");
+        DB::statement("ALTER TABLE telemetry_events DROP COLUMN IF EXISTS event_id");
     }
 };
