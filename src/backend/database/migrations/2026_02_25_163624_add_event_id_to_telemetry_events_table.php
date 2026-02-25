@@ -8,19 +8,15 @@ return new class extends Migration
 {
     public function up(): void
     {
-        if (!Schema::hasColumn('telemetry_events', 'event_id')) {
-            Schema::table('telemetry_events', function (Blueprint $table) {
-                $table->uuid('event_id')->unique();
-            });
-        }
+        Schema::table('telemetry_events', function (Blueprint $table) {
+            $table->uuid('event_id')->unique();
+        });
     }
 
     public function down(): void
     {
-        if (Schema::hasColumn('telemetry_events', 'event_id')) {
-            Schema::table('telemetry_events', function (Blueprint $table) {
-                $table->dropColumn('event_id');
-            });
-        }
+        Schema::table('telemetry_events', function (Blueprint $table) {
+            $table->dropColumn('event_id');
+        });
     }
 };
