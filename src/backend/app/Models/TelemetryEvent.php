@@ -10,6 +10,7 @@ class TelemetryEvent extends Model
     use HasFactory;
 
     protected $fillable = [
+        'event_id',
         'site_id',
         'severity',
         'event_timestamp',
