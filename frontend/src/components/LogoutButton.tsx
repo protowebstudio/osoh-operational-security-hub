@@ -12,7 +12,7 @@ export default function LogoutButton() {
                 headers: {
                     "Content-Type": "application/json",
                     Accept: "application/json",
-                    Authorization: token ? Bearer  : "",
+                    Authorization: token ? `Bearer ${token}` : "",
                 },
             });
         } catch {}
