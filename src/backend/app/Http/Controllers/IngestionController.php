@@ -26,6 +26,7 @@ class IngestionController extends Controller
             'event_timestamp' => $validated['event_timestamp'],
             'message' => $validated['message'] ?? null,
         ]);
+        $event->refresh();
 
         // Deterministic synchronous recompute
         $riskService = new RiskService();
