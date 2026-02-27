@@ -66,9 +66,12 @@ jobs:
           exit 1
 
       - name: Prepare environment
+        env:
+          PGPASSWORD: secret
         run: |
           cp .env.example .env
           php artisan key:generate
+          psql -h 127.0.0.1 -U postgres -d osoh -c "CREATE EXTENSION IF NOT EXISTS pgcrypto;"
           php artisan migrate --force
 
       - name: Run tests
