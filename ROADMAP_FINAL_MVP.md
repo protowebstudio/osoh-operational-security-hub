@@ -148,3 +148,18 @@ Command (sanitized script):
 Observed:
 - PASS (observed on 2026-02-28 UTC)
 - Evidence: terminal capture shows event_id + snapshot fields (score/level/event_count/window_size/computed_at) and logout_http_status=200
+
+---
+
+### E7 — WWW Deployed Bundle Uses Live API Base (PASS)
+
+Commands:
+- Detect bundle path:
+  `curl -sS https://protowebstudio.com/ | grep -Eo "assets/index-[A-Za-z0-9_-]+\.js" | head -n 1`
+- Verify bundle contains live base:
+  `curl -sS "https://protowebstudio.com/$JS_PATH" | grep -F "API_BASE_URL" | head -n 5`
+- Verify bundle contains no localhost:
+  `curl -sS "https://protowebstudio.com/$JS_PATH" | grep -E "localhost:8000|127\.0\.0\.1:8000" | head -n 5 || true`
+
+Observed:
+- PASS (observed on 2026-02-28 UTC)
