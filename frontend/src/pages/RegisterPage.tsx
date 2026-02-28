@@ -1,94 +1,91 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { apiClient } from "../services/apiClient";
+import { setAuthToken } from "../services/apiClient";
 
 export default function RegisterPage() {
   const navigate = useNavigate();
 
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    if (!name || !email || !password) {
+      alert("All fields are required");
+      return;
+    }
+
     if (password !== confirmPassword) {
-      alert('Passwords do not match');
+      alert("Passwords do not match");
       return;
     }
 
     try {
-      const response = await fetch('http://127.0.0.1:8000/api/register', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
-        },
-        body: JSON.stringify({
-          name,
-          email,
-          password,
-        }),
+      const response = await apiClient<{ token: string }>("/api/register", {
+        method: "POST",
+        body: JSON.stringify({ name, email, password }),
       });
 
-      const data = await response.json();
-
-      if (!response.ok) {
-        alert(data.message || 'Registration failed');
-        return;
+      if (!response?.token) {
+        throw new Error();
       }
 
-      localStorage.setItem('auth_token', data.token);
-      navigate('/dashboard');
+      setAuthToken(response.token);
+      localStorage.setItem("auth_token", response.token);
 
-    } catch (error) {
-      alert('Server error');
+      navigate("/dashboard");
+    } catch {
+      alert("Registration failed");
     }
   };
 
   return (
-    <div className='min-h-screen bg-slate-900 flex items-center justify-center'>
-      <div className='bg-slate-800 p-8 rounded-xl shadow-xl w-full max-w-md'>
-        <h2 className='text-2xl font-bold text-white mb-6 text-center'>
+    <div className="min-h-screen bg-slate-900 flex items-center justify-center">
+      <div className="bg-slate-800 p-8 rounded-xl shadow-xl w-full max-w-md">
+        <h2 className="text-2xl font-bold text-white mb-6 text-center">
           Register
         </h2>
 
-        <form className='space-y-4' onSubmit={handleSubmit}>
+        <form className="space-y-4" onSubmit={handleSubmit}>
           <input
-            type='text'
-            placeholder='Name'
+            type="text"
+            placeholder="Name"
             value={name}
             onChange={(e) => setName(e.target.value)}
-            className='w-full p-3 rounded-lg bg-slate-700 text-white'
+            className="w-full p-3 rounded-lg bg-slate-700 text-white"
           />
 
           <input
-            type='email'
-            placeholder='Email'
+            type="email"
+            placeholder="Email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className='w-full p-3 rounded-lg bg-slate-700 text-white'
+            className="w-full p-3 rounded-lg bg-slate-700 text-white"
           />
 
           <input
-            type='password'
-            placeholder='Password'
+            type="password"
+            placeholder="Password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className='w-full p-3 rounded-lg bg-slate-700 text-white'
+            className="w-full p-3 rounded-lg bg-slate-700 text-white"
           />
 
           <input
-            type='password'
-            placeholder='Confirm Password'
+            type="password"
+            placeholder="Confirm Password"
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
-            className='w-full p-3 rounded-lg bg-slate-700 text-white'
+            className="w-full p-3 rounded-lg bg-slate-700 text-white"
           />
 
           <button
-            type='submit'
-            className='w-full py-3 bg-emerald-500 hover:bg-emerald-600 rounded-lg font-semibold transition'
+            type="submit"
+            className="w-full py-3 bg-emerald-500 hover:bg-emerald-600 rounded-lg font-semibold transition"
           >
             Register
           </button>
