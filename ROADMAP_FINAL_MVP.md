@@ -133,3 +133,18 @@ These are explicitly not claimed as MVP-complete until proven with new evidence:
 
 2) WWW E2E (manual in browser) verifying dashboard calls live API and displays snapshots.
 
+
+---
+
+### E6 — Production API E2E (PASS)
+
+Command (sanitized script):
+- register -> token (redacted)
+- create site -> site token (redacted)
+- ingest -> event_id
+- fetch risk -> snapshot JSON
+- logout -> http 200
+
+Observed:
+- PASS (observed on 2026-02-28 UTC)
+- Evidence: terminal capture shows event_id + snapshot fields (score/level/event_count/window_size/computed_at) and logout_http_status=200
