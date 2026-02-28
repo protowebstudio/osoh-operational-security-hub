@@ -163,3 +163,17 @@ Commands:
 
 Observed:
 - PASS (observed on 2026-02-28 UTC)
+
+---
+
+### E8 — API Root Returns JSON Banner (PASS)
+
+Command:
+- `curl -i https://api.protowebstudio.com/ | sed -n '1,25p'`
+
+Expected:
+- HTTP 200
+- JSON body includes `service: "osoh-api"`, `status: "ok"`, `timestamp`
+
+Observed:
+- PASS (observed on 2026-02-28 UTC)
