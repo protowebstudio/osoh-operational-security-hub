@@ -12,21 +12,32 @@ export function DashboardPage() {
   const [sites, setSites] = useState<Site[]>([]);
   const [selectedSite, setSelectedSite] = useState<Site | null>(null);
   const [snapshot, setSnapshot] = useState<RiskSnapshot | null>(null);
+
+  const [newName, setNewName] = useState<string>("");
+  const [newUrl, setNewUrl] = useState<string>("");
+
   const [loading, setLoading] = useState<boolean>(true);
+  const [creating, setCreating] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
+
+  const refreshSites = async () => {
+    const data = await SiteService.getSites();
+    if (Array.isArray(data) && data.length > 0) {
+      setSites(data);
+      setSelectedSite((prev) => prev ?? data[0] ?? null);
+    } else {
+      setSites([]);
+      setSelectedSite(null);
+      setSnapshot(null);
+    }
+  };
 
   useEffect(() => {
     AuthService.hydrateFromStorage();
 
     const load = async () => {
       try {
-        const data = await SiteService.getSites();
-        if (Array.isArray(data) && data.length > 0) {
-          setSites(data);
-          setSelectedSite(data[0] ?? null);
-        } else {
-          setSites([]);
-        }
+        await refreshSites();
       } catch {
         setError("Failed to load sites");
       } finally {
@@ -51,6 +62,21 @@ export function DashboardPage() {
     loadRisk();
   }, [selectedSite]);
 
+  const handleCreateSite = async () => {
+    setError(null);
+    setCreating(true);
+    try {
+      await SiteService.createSite({ name: newName.trim(), url: newUrl.trim() });
+      setNewName("");
+      setNewUrl("");
+      await refreshSites();
+    } catch (e: any) {
+      setError(e?.message || "Failed to create site");
+    } finally {
+      setCreating(false);
+    }
+  };
+
   const handleLogout = async () => {
     await AuthService.logout();
     navigate("/");
@@ -73,6 +99,36 @@ export function DashboardPage() {
       <main className="max-w-6xl mx-auto px-6 py-10 space-y-8">
         {loading && <p>Loading...</p>}
         {error && <p className="text-red-400">{error}</p>}
+
+        {!loading && (
+          <section className="bg-slate-800 rounded-xl p-6 space-y-4">
+            <h2 className="text-lg font-semibold">Register Website</h2>
+
+            <input
+              type="text"
+              placeholder="Project Name"
+              value={newName}
+              onChange={(e) => setNewName(e.target.value)}
+              className="w-full p-3 rounded-lg bg-slate-700 text-white"
+            />
+
+            <input
+              type="url"
+              placeholder="Website URL (https://...)"
+              value={newUrl}
+              onChange={(e) => setNewUrl(e.target.value)}
+              className="w-full p-3 rounded-lg bg-slate-700 text-white"
+            />
+
+            <button
+              onClick={handleCreateSite}
+              disabled={creating}
+              className="px-4 py-2 bg-emerald-500 hover:bg-emerald-600 disabled:opacity-60 rounded-lg transition"
+            >
+              {creating ? "Creating..." : "Create Site"}
+            </button>
+          </section>
+        )}
 
         {!loading && sites.length === 0 && (
           <p className="text-slate-400">No sites registered yet.</p>
