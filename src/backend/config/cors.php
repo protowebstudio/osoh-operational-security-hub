@@ -6,7 +6,7 @@ return [
 
     'allowed_methods' => ['*'],
 
-    'allowed_origins' => ['https://sentinel.protowebstudio.com','https://protowebstudio.com'],
+    'allowed_origins' => ['https://sentinel.protowebstudio.com','https://protowebstudio.com','https://www.protowebstudio.com'],
 
     'allowed_origins_patterns' => [],
 

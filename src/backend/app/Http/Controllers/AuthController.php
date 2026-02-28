@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Validation\ValidationException;
 use App\Models\User;
 
 class AuthController extends Controller
@@ -40,9 +39,9 @@ class AuthController extends Controller
         ]);
 
         if (!Auth::attempt($validated)) {
-            throw ValidationException::withMessages([
-                'email' => ['Invalid credentials.'],
-            ]);
+            return response()->json([
+                'message' => 'Invalid credentials.'
+            ], 401);
         }
 
         $user = $request->user();
@@ -51,7 +50,7 @@ class AuthController extends Controller
         return response()->json([
             'token' => $token,
             'user' => $user,
-        ]);
+        ], 200);
     }
 
     public function logout(Request $request)
@@ -60,6 +59,6 @@ class AuthController extends Controller
 
         return response()->json([
             'message' => 'Logged out successfully'
-        ]);
+        ], 200);
     }
 }
