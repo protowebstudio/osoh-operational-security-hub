@@ -1,7 +1,7 @@
 import { createBrowserRouter, redirect } from "react-router-dom";
 import HomePage from "../pages/HomePage";
 import { LoginPage } from "../pages/LoginPage";
-import { DashboardPage } from "../pages/DashboardPage";
+import DashboardPage from "../pages/DashboardPage";
 import RegisterPage from "../pages/RegisterPage";
 
 const requireAuth = () => {

@@ -7,7 +7,10 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "scan:forbidden": "node scripts/scan-forbidden-env.js",
+    "assert:env:prod": "node scripts/assert-env.js production",
+    "assert:env:local": "node scripts/assert-env.js local"
   },
   "dependencies": {
     "react": "^19.2.0",

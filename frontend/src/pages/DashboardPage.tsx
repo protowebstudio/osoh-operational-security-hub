@@ -1,186 +1,114 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { SiteService } from "../services/siteService";
-import { RiskService } from "../services/riskService";
-import { AuthService } from "../services/authService";
-import type { Site } from "../models/site";
-import type { RiskSnapshot } from "../models/riskSnapshot";
 
-export function DashboardPage() {
-  const navigate = useNavigate();
+type Site = {
+  id: number;
+  name: string;
+  risk_threshold_high: number;
+  risk_threshold_critical: number;
+  risk_window_size: number;
+};
 
+export default function DashboardPage() {
   const [sites, setSites] = useState<Site[]>([]);
-  const [selectedSite, setSelectedSite] = useState<Site | null>(null);
-  const [snapshot, setSnapshot] = useState<RiskSnapshot | null>(null);
-
-  const [newName, setNewName] = useState<string>("");
-  const [newUrl, setNewUrl] = useState<string>("");
-
-  const [loading, setLoading] = useState<boolean>(true);
-  const [creating, setCreating] = useState<boolean>(false);
+  const [newName, setNewName] = useState("");
+  const [riskHigh, setRiskHigh] = useState("70");
+  const [riskCritical, setRiskCritical] = useState("90");
+  const [riskWindowSize, setRiskWindowSize] = useState("24");
   const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
 
-  const refreshSites = async () => {
-    const data = await SiteService.getSites();
-    if (Array.isArray(data) && data.length > 0) {
+  const loadSites = async () => {
+    try {
+      const data = await SiteService.listSites();
       setSites(data);
-      setSelectedSite((prev) => prev ?? data[0] ?? null);
-    } else {
-      setSites([]);
-      setSelectedSite(null);
-      setSnapshot(null);
+    } catch (err) {
+      console.error(err);
+      setError("Failed to load sites");
     }
   };
 
   useEffect(() => {
-    AuthService.hydrateFromStorage();
-
-    const load = async () => {
-      try {
-        await refreshSites();
-      } catch {
-        setError("Failed to load sites");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    load();
+    loadSites();
   }, []);
 
-  useEffect(() => {
-    const loadRisk = async () => {
-      if (!selectedSite) return;
-      try {
-        const risk = await RiskService.getSnapshot(selectedSite.id);
-        setSnapshot(risk);
-      } catch {
-        setError("Failed to load risk snapshot");
-      }
-    };
-
-    loadRisk();
-  }, [selectedSite]);
-
-  const handleCreateSite = async () => {
+  const handleCreateSite = async (e: React.FormEvent) => {
+    e.preventDefault();
     setError(null);
-    setCreating(true);
-    try {
-      await SiteService.createSite({ name: newName.trim(), url: newUrl.trim() });
-      setNewName("");
-      setNewUrl("");
-      await refreshSites();
-    } catch (e: any) {
-      setError(e?.message || "Failed to create site");
-    } finally {
-      setCreating(false);
-    }
-  };
+    setLoading(true);
 
-  const handleLogout = async () => {
-    await AuthService.logout();
-    navigate("/");
+    try {
+      await SiteService.createSite({
+        name: newName.trim(),
+        risk_threshold_high: Number(riskHigh),
+        risk_threshold_critical: Number(riskCritical),
+        risk_window_size: Number(riskWindowSize),
+      });
+
+      setNewName("");
+      setRiskHigh("70");
+      setRiskCritical("90");
+      setRiskWindowSize("24");
+      await loadSites();
+    } catch (err) {
+      console.error(err);
+      setError("Failed to create site");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
-    <div className="min-h-screen bg-slate-900 text-white">
-      <header className="bg-slate-800 shadow-md">
-        <div className="max-w-6xl mx-auto px-6 py-4 flex justify-between items-center">
-          <h1 className="text-xl font-bold">Dashboard</h1>
-          <button
-            onClick={handleLogout}
-            className="px-4 py-2 bg-emerald-500 hover:bg-emerald-600 rounded-lg transition"
-          >
-            Logout
-          </button>
-        </div>
-      </header>
+    <div>
+      <h1>Dashboard</h1>
 
-      <main className="max-w-6xl mx-auto px-6 py-10 space-y-8">
-        {loading && <p>Loading...</p>}
-        {error && <p className="text-red-400">{error}</p>}
+      <form onSubmit={handleCreateSite}>
+        <input
+          type="text"
+          placeholder="Site name"
+          value={newName}
+          onChange={(e) => setNewName(e.target.value)}
+          required
+        />
 
-        {!loading && (
-          <section className="bg-slate-800 rounded-xl p-6 space-y-4">
-            <h2 className="text-lg font-semibold">Register Website</h2>
+        <input
+          type="number"
+          placeholder="Risk threshold high"
+          value={riskHigh}
+          onChange={(e) => setRiskHigh(e.target.value)}
+          required
+        />
 
-            <input
-              type="text"
-              placeholder="Project Name"
-              value={newName}
-              onChange={(e) => setNewName(e.target.value)}
-              className="w-full p-3 rounded-lg bg-slate-700 text-white"
-            />
+        <input
+          type="number"
+          placeholder="Risk threshold critical"
+          value={riskCritical}
+          onChange={(e) => setRiskCritical(e.target.value)}
+          required
+        />
 
-            <input
-              type="url"
-              placeholder="Website URL (https://...)"
-              value={newUrl}
-              onChange={(e) => setNewUrl(e.target.value)}
-              className="w-full p-3 rounded-lg bg-slate-700 text-white"
-            />
+        <input
+          type="number"
+          placeholder="Risk window size"
+          value={riskWindowSize}
+          onChange={(e) => setRiskWindowSize(e.target.value)}
+          required
+        />
 
-            <button
-              onClick={handleCreateSite}
-              disabled={creating}
-              className="px-4 py-2 bg-emerald-500 hover:bg-emerald-600 disabled:opacity-60 rounded-lg transition"
-            >
-              {creating ? "Creating..." : "Create Site"}
-            </button>
-          </section>
-        )}
+        <button type="submit" disabled={loading}>
+          {loading ? "Creating..." : "Create Site"}
+        </button>
+      </form>
 
-        {!loading && sites.length === 0 && (
-          <p className="text-slate-400">No sites registered yet.</p>
-        )}
+      {error && <p>{error}</p>}
 
-        {!loading && sites.length > 0 && (
-          <>
-            <section className="bg-slate-800 rounded-xl p-6">
-              <h2 className="text-lg font-semibold mb-4">Your Sites</h2>
-              <ul className="space-y-2">
-                {sites.map((site) => (
-                  <li key={site.id}>
-                    <button
-                      onClick={() => setSelectedSite(site)}
-                      className={`w-full text-left px-4 py-2 rounded ${
-                        selectedSite?.id === site.id
-                          ? "bg-emerald-600"
-                          : "bg-slate-700 hover:bg-slate-600"
-                      }`}
-                    >
-                      {site.name}
-                    </button>
-                  </li>
-                ))}
-              </ul>
-            </section>
-
-            {selectedSite && snapshot && (
-              <section className="bg-slate-800 rounded-xl p-6">
-                <h2 className="text-lg font-semibold mb-4">
-                  Risk Overview — {selectedSite.name}
-                </h2>
-
-                <div className="space-y-2">
-                  <p>
-                    Risk Score: <strong>{snapshot.score}</strong>
-                  </p>
-                  <p>
-                    Level: <strong>{snapshot.level}</strong>
-                  </p>
-                  <p>Event Count: {snapshot.event_count}</p>
-                  <p>Window Size: {snapshot.window_size}</p>
-                  <p>
-                    Computed At:{" "}
-                    {new Date(snapshot.computed_at).toLocaleString()}
-                  </p>
-                </div>
-              </section>
-            )}
-          </>
-        )}
-      </main>
+      <ul>
+        {sites.map((site) => (
+          <li key={site.id}>
+            {site.name} — high: {site.risk_threshold_high}, critical: {site.risk_threshold_critical}, window: {site.risk_window_size}
+          </li>
+        ))}
+      </ul>
     </div>
   );
 }
