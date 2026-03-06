@@ -36,7 +36,7 @@ export default function RegisterPage() {
 
       setAuthToken(response.token);
     localStorage.setItem("auth_token", response.token);
-    setAuthToken(response.token);
+
     navigate("/dashboard");
     } catch {
       alert("Registration failed");
@@ -94,3 +94,4 @@ export default function RegisterPage() {
     </div>
   );
 }
+
