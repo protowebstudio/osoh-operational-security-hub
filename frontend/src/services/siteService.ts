@@ -8,10 +8,11 @@ export type CreateSitePayload = {
 };
 
 export const SiteService = {
-  listSites: () => apiClient<any[]>("/sites"),
+  listSites: () => apiClient<any[]>(("/api/sites")),
   createSite: (payload: CreateSitePayload) =>
-    apiClient<any>("/sites", {
+    apiClient<any>(("/api/sites"), {
       method: "POST",
       body: JSON.stringify(payload),
     }),
 };
+
