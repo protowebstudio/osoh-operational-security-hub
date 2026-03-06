@@ -1,25 +1,12 @@
-import { useNavigate } from "react-router-dom";
-
+import { AuthService } from '../services/authService';
 export default function LogoutButton() {
-    const navigate = useNavigate();
-
     const handleLogout = async () => {
-        const token = localStorage.getItem("auth_token");
-
-        try {
-            await fetch("http://localhost:8000/api/logout", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    Accept: "application/json",
-                    Authorization: token ? `Bearer ${token}` : "",
-                },
-            });
-        } catch {}
-
-        localStorage.removeItem("auth_token");
-        navigate("/login");
-    };
+    try {
+      await AuthService.logout();
+    } finally {
+      window.location.href = '/';
+    }
+  };
 
     return (
         <button

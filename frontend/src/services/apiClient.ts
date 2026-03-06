@@ -16,9 +16,17 @@ export const apiClient = async <T>(
     endpoint: string,
     options: RequestInit = {}
 ): Promise<T> => {
-    const response = await fetch(`${ENV.API_BASE_URL}${endpoint}`, {
+    console.log("[API_PROBE]", {
+    baseUrl: ENV.API_BASE_URL,
+    endpoint,
+    finalUrl: `${ENV.API_BASE_URL}${endpoint}`,
+    options,
+  });
+  const response = await fetch(`${ENV.API_BASE_URL}${endpoint}`, {
         ...options,
         headers: {
+      "Accept": "application/json",
+      "X-Requested-With": "XMLHttpRequest",
             "Content-Type": "application/json",
             ...(authToken ? { Authorization: `Bearer ${authToken}` } : {}),
             ...options.headers,
@@ -34,5 +42,11 @@ export const apiClient = async <T>(
         throw new Error(`ERR_API_${response.status}`);
     }
 
-    return response.json() as Promise<T>;
+    const contentType = response.headers.get('content-type') || '';
+  const text = await response.text();
+  if (!text) return null as unknown as T;
+  if (!contentType.includes('application/json')) {
+    throw new Error(`ERR_API_NOT_JSON_${response.status}_${response.url}`);
+  }
+  return JSON.parse(text) as T;
 };

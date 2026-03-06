@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import { AuthService } from '../services/authService';
 export function LoginPage() {
   const navigate = useNavigate();
 
@@ -11,23 +12,7 @@ export function LoginPage() {
     e.preventDefault();
 
     try {
-      const response = await fetch('http://127.0.0.1:8000/api/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
-        },
-        body: JSON.stringify({ email, password }),
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        alert(data.message || 'Login failed');
-        return;
-      }
-
-      localStorage.setItem('auth_token', data.token);
+      await AuthService.login(email, password);
       navigate('/dashboard');
     } catch {
       alert('Server error');

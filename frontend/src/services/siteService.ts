@@ -1,23 +1,17 @@
 import { apiClient } from "./apiClient";
-import type { Site } from "../models/site";
+
+export type CreateSitePayload = {
+  name: string;
+  risk_threshold_high: number;
+  risk_threshold_critical: number;
+  risk_window_size: number;
+};
 
 export const SiteService = {
-  getSites: async (): Promise<Site[]> => {
-    return apiClient<Site[]>("/api/sites");
-  },
-
-  createSite: async (payload: { name: string; url: string }): Promise<Site> => {
-    if (!payload.name || !payload.url) {
-      throw new Error("Name and URL are required.");
-    }
-
-    if (!/^https?:\/\/.+\..+/.test(payload.url)) {
-      throw new Error("URL must be a valid absolute URL (https://...).");
-    }
-
-    return apiClient<Site>("/api/sites", {
+  listSites: () => apiClient<any[]>("/sites"),
+  createSite: (payload: CreateSitePayload) =>
+    apiClient<any>("/sites", {
       method: "POST",
       body: JSON.stringify(payload),
-    });
-  },
+    }),
 };
