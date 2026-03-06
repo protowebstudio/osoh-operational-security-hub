@@ -51,3 +51,4 @@ src/backend/bootstrap/cache/
 # Test Artifacts
 # =========================
 coverage/
+frontend/dist_release.zip
