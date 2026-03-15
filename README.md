@@ -1,268 +1,236 @@
-# Operational Security & Observability Hub (OSOH)
+# OSOH — Operational Security Hub
 
----
+**OSOH (Operational Security Hub)** is a deterministic full-stack **centralized security operations MVP** designed to demonstrate how a monitored external surface, a platform layer, and a backend/API layer can operate as a connected but intentionally separated system.
 
-## 1. Executive Summary
+This repository represents the **core operational platform** of the project.
 
-Operational Security & Observability Hub (OSOH) is a production-ready deterministic MVP designed to ingest telemetry events, compute a bounded risk score, and provide real-time operational visibility.
+It is not just a web application.  
+It is a **documented, governed, deployable, evidence-backed MVP** built to support technical validation, controlled implementation, and academic defense in the context of a TFM.
 
-The system is secure, reproducible, and hardened within strict MVP scope boundaries.
+## Project position inside the full MVP
 
----
+The complete MVP is built around three connected but separated surfaces:
 
-## 2. Problem Statement
+- `protowebstudio.com` — the main operational platform
+- `api.protowebstudio.com` — the backend/API execution layer
+- `sentinel.protowebstudio.com` — the external monitored trust and presentation surface
 
-Engineering teams require a lightweight, deterministic, and structured mechanism to:
+Within that architecture:
 
-- Ingest security-relevant events
-- Quantify operational risk without probabilistic logic
-- Escalate risk thresholds consistently
-- Maintain reproducible deployments
+- **OSOH** provides the operational nucleus, system framing, and dashboard-oriented logic
+- **API** provides backend execution, service behavior, and machine-facing interfaces
+- **Sentinel** provides the public monitored surface used for external validation, trust presentation, and proof that a real site can be observed end to end
 
-Most solutions are either overly complex or insufficiently structured.
+This separation is deliberate. It is part of both the technical value and the academic value of the project.
 
----
+## What this repository is
 
-## 3. Solution Overview
+This repository is:
 
-OSOH provides:
+- the **core platform repository** of the OSOH MVP
+- the place where the main operational web surface is implemented
+- a governed implementation environment
+- part of a broader three-surface architecture
+- an artifact intended to support reproducible validation, deployment discipline, and TFM defense
 
-- Secure authentication via Laravel Sanctum
-- Site-based telemetry ingestion using SHA256 hashed tokens
-- Constant-time token validation
-- Automatic deterministic risk recomputation
-- Bounded risk scoring (0–100)
-- Snapshot persistence
-- Security event logging
-- Rate-limited ingestion endpoint
-- Docker-based reproducible deployment
+## What this repository is not
 
-System scope remains intentionally bounded.
+This repository is **not**:
 
----
+- the totality of the full project
+- the Sentinel public monitored surface
+- only a marketing/presentation site
+- only a backend service
+- a generic dashboard template
+- a throwaway academic mock-up with no deployment or validation intent
 
-## 4. Architecture Overview
+## Purpose
 
+OSOH exists to demonstrate a realistic and bounded security-operations model in which:
+
+- operational visibility is centralized
+- monitoring results can be surfaced coherently
+- backend execution is separated from public presentation
+- risk and validation narratives remain explicit and auditable
+- the system can be explained, tested, and defended as an MVP rather than oversold as a production SOC platform
+
+## Core characteristics
+
+The project emphasizes:
+
+- deterministic behavior over ambiguity
+- explicit scope boundaries
+- bounded risk scoring and observability logic
+- clear architecture separation
+- deployment and runtime validation
+- documentation-backed implementation
+- governance-aware development
+- technical honesty about limitations and current maturity
+
+## Architecture summary
+
+At a high level, the system is organized as follows:
+
+### 1. Core platform layer
+The main platform provides the operator-facing experience, application structure, workflow framing, and system-level presentation of the MVP.
+
+### 2. API / execution layer
+The backend/API layer handles machine-facing execution behavior, service orchestration, and integration logic required by the MVP.
+
+### 3. Monitored external surface
+The Sentinel surface exists as a separately deployed and publicly visible monitored target, allowing the broader system to demonstrate end-to-end monitoring and evidence of operation.
+
+This three-part structure is one of the key foundations of the project.
+
+## Security and governance posture
+
+This project is designed with a strong emphasis on **bounded implementation** and **explicit control**.
+
+The overall posture favors:
+
+- controlled scope
+- explainable architecture
+- deterministic workflows
+- explicit constraints
+- auditable decisions
+- documented limitations instead of hidden assumptions
+
+The goal is not to simulate an infinitely extensible enterprise platform.  
+The goal is to produce a credible, technically serious, and defensible MVP.
+
+## MVP boundaries
+
+This repository should be read through an MVP lens.
+
+That means:
+
+- some flows are intentionally narrowed
+- some integrations are bounded
+- some operational assumptions are documented rather than abstracted away
+- the project favors proof of concept validity and architectural discipline over feature sprawl
+
+That is an intentional design choice, not a defect.
+
+## Current maturity
+
+The project has moved beyond the level of a simple prototype.
+
+Its current maturity is better described as:
+
+- **implemented MVP**
+- **documented system**
+- **deployable architecture**
+- **evidence-backed technical work**
+- **TFM-ready foundation with clear boundaries**
+
+It should still be interpreted honestly as an MVP rather than as a finished enterprise product.
+
+## Relationship to Sentinel
+
+The Sentinel repository/site should be understood as the **public monitored trust surface** of the same broader project.
+
+That relationship matters because Sentinel provides:
+
+- an external target that can be monitored
+- a public-facing explanatory and trust layer
+- visible evidence that the architecture is not purely theoretical
+- an additional validation surface for the TFM narrative
+
+OSOH and Sentinel are therefore related, but they do not serve the same role.
+
+## Technology profile
+
+Based on the current project direction, this repository is centered on a modern web-stack implementation with operational and documentation concerns built into the workflow.
+
+The broader project currently reflects:
+
+- frontend application structure
+- backend/API separation
+- deployment workflow discipline
+- validation-oriented documentation
+- test/build gate awareness
+- repository-level governance and repeatability concerns
+
+## Local development
+
+Install dependencies:
+
+```bash
+npm install
 ```
 
-Client → Laravel API → Deterministic Risk Engine → PostgreSQL
+Start the local development environment:
 
+```bash
+npm run dev
 ```
 
-Deployment Model:
+Build the project:
 
+```bash
+npm run build
 ```
 
-Docker Compose
-├── app (Laravel)
-└── db (PostgreSQL)
+Run the available quality or verification commands defined by the repository:
 
+```bash
+npm run test
+npm run lint
 ```
 
-Single deployment unit. No microservices.
+If a command is not defined in the repository, treat that as a repository-specific constraint rather than substituting assumptions.
 
----
+## Safe working model
 
-## 5. Technology Stack
+Because this project is tied to a larger live and documented MVP, changes should be made through a controlled verification flow:
 
-Backend:
-- Laravel (PHP 8.2+)
-- PostgreSQL
-- Laravel Sanctum
-- SHA256 token hashing
-- Deterministic RiskService
+1. inspect current repo state
+2. make a bounded change
+3. run the defined verification/build commands
+4. review the diff
+5. commit only after local verification
+6. push only after gates pass or after consciously handling any verified exception
+7. re-check the affected live/project surfaces
 
-Infrastructure:
-- Docker Compose
-- GitHub Actions CI
-- Render / Railway compatible
+The repository should be worked on as a **governed system component**, not as an ad hoc scratch project.
 
----
+## Documentation role
 
-## 6. Data Model Summary
+This repository is also part of the project’s academic and documentary footprint.
 
-User
-- id
-- name
-- email
+Its documentation is expected to support:
 
-Site
-- id
-- name
-- hashed_token (SHA256)
-- risk_threshold_high
-- risk_threshold_critical
-- risk_window_size
+- clear project framing
+- scope definition
+- architecture explanation
+- reproducibility
+- reviewability
+- technical defense in a TFM context
 
-TelemetryEvent
-- id
-- site_id
-- severity
-- event_timestamp
-- message
+That means README quality matters.  
+The repository should explain what the system is, what role it plays, and what claims it does **not** make.
 
-RiskSnapshot
-- site_id
-- score (0–100)
-- level
-- computed_at
+## Honest project claim
 
-SecurityEvent
-- site_id (nullable)
-- event_type
-- description
-- occurred_at
+The strongest accurate claim for this repository is:
 
----
+**OSOH is the core operational platform of a governed, evidence-backed, centralized security operations MVP with separated platform, API, and monitored public-surface layers.**
 
-## 7. Deterministic Risk Engine
+That is the right level of ambition:
+serious, real, bounded, and defensible.
 
-Risk Score:
+## Status note
 
-```
+This project is under active development and refinement.
 
-Score = min(100, Σ severity_weight)
+That means some areas may continue to evolve, but the intended interpretation of the repository should remain stable:
 
-```
+- it is operationally serious
+- it is MVP-bounded
+- it is architecturally deliberate
+- it is documentation-aware
+- it is part of a broader validated system
 
-Severity Weights:
+## License / project context
 
-- Low = 10
-- Medium = 25
-- High = 50
-- Critical = 75
-
-Window Logic:
-Last N events per site (risk_window_size).
-
-Thresholds:
-- ≥ risk_threshold_high → High
-- ≥ risk_threshold_critical → Critical
-
-Risk recomputes automatically after each ingestion.
-
-No AI.
-No probabilistic scoring.
-Fully deterministic.
-
----
-
-## 8. Security Model
-
-Authentication:
-- Laravel Sanctum
-
-Telemetry Authentication:
-- SHA256 hashed tokens
-- Constant-time validation
-- No plaintext token storage
-
-Hardening:
-- Automatic risk recompute
-- Invalid token attempts logged in security_events
-- Rate limiting (60 req/min)
-- Strict input validation
-- Environment-based secrets
-
----
-
-## 9. API Overview
-
-Authentication:
-- POST /api/login
-- POST /api/logout
-
-Sites:
-- GET /api/sites
-- POST /api/sites
-- GET /api/sites/{id}
-- DELETE /api/sites/{id}
-- POST /api/sites/{id}/rotate-token
-
-Telemetry:
-- POST /api/ingest (X-SITE-TOKEN header)
-
-Risk:
-- GET /api/sites/{id}/risk
-
-Health:
-- GET /api/health
-  Returns deterministic JSON status payload.
-
----
-
-## 10. Setup
-
-```
-
-docker compose up --build
-
-```
-
-Run migrations inside container:
-
-```
-
-docker exec -it osoh_app php artisan migrate
-
-```
-
-Stop:
-
-```
-
-docker compose down
-
-```
-
----
-
-## 11. Deployment
-
-1. Build Docker image
-2. Configure environment variables
-3. Provision PostgreSQL
-4. Run migrations
-5. Validate /up endpoint
-
-Reproducibility guaranteed by Docker.
-
----
-
-## 12. Demo Scenario
-
-1. Login
-2. Create Site
-3. Obtain ingestion token
-4. Send telemetry event
-5. Risk auto-recomputes
-6. Snapshot persisted
-7. Threshold escalation visible
-
-Demonstrates:
-
-- Secure ingestion boundary
-- Deterministic scoring
-- Automatic consistency
-- Security logging
-- Rate limiting
-
----
-
-## 13. AI Usage Disclosure
-
-AI tools assisted with scaffolding and documentation.
-
-All architectural decisions, risk logic, and security boundaries were manually designed and validated.
-
-No AI-based scoring is implemented.
-
----
-
-## 14. Version
-
-See VERSION file.
-
-Current Status:
-MVP+ Hardened (Deterministic & Secure)
-
+Unless otherwise stated, this repository should be interpreted within the wider Protowebstudio / OSOH project context and its associated MVP, validation, and TFM-defense goals.
